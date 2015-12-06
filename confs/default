@@ -1,0 +1,21 @@
+## Esta no la uso actualmente
+
+server {
+	listen 80;
+	root /var/www/wordpress;
+	index index.php index.html index.htm;
+
+	server_name dlna.nashgul.com.es;
+
+	location / {
+		try_files $uri $uri/ /index.php?$args;
+	}
+
+	location ~ \.php$ {
+		try_files $uri =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_index index.php;
+		include fastcgi_params;
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+	}
+}

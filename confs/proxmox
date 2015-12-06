@@ -1,0 +1,27 @@
+server {
+	listen 443;
+	server_name proxmox.nashgul.com.es;
+	ssl on;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+    
+	ssl_certificate /etc/nginx/certs/proxmox/ssl_chained.crt;
+	ssl_certificate_key /etc/nginx/certs/proxmox/ssl.key;
+	proxy_redirect off;
+	
+	access_log /var/log/nginx/proxmox.vhost.access.log;
+	error_log /var/log/nginx/proxmox.vhost.error.log;
+	
+	ssl_session_cache shared:SSL:10m;
+	ssl_session_timeout  5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+	ssl_prefer_server_ciphers   on;
+	ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4";
+	ssl_dhparam /etc/nginx/certs/www/dhparam.pem;	
+
+	location / {
+        	proxy_http_version 1.1;
+        	proxy_set_header Upgrade $http_upgrade;
+        	proxy_set_header Connection "upgrade"; 
+        	proxy_pass https://192.168.1.110:8006;
+    	}
+}
